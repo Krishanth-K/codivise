@@ -69,7 +69,7 @@ void loop() {
   Serial.println(" cm");
 
   // Obstacle avoidance logic
-  if (distanceFrontLeft > OBSTACLE_THRESHOLD && distanceFrontRight > OBSTACLE_THRESHOLD) {
+  if ((distanceFrontLeft > OBSTACLE_THRESHOLD || distanceFrontLeft == -1) && (distanceFrontRight > OBSTACLE_THRESHOLD || distanceFrontRight == -1)) {
     // No obstacle in front: move forward
     Serial.println("Moving Forward");
     moveForward();
@@ -77,21 +77,21 @@ void loop() {
     // Obstacle on left: turn right
     Serial.println("Turning Right");
     turnRight();
-    delay(1000); // Turn for 1 second
+    delay(200); // Turn for 1 second
     stopMotors();
   } else if (distanceFrontRight <= OBSTACLE_THRESHOLD && distanceFrontLeft > OBSTACLE_THRESHOLD) {
     // Obstacle on right: turn left
     Serial.println("Turning Left");
     turnLeft();
-    delay(1000); // Turn for 1 second
+    delay(200); // Turn for 1 second
     stopMotors();
   } else if (distanceFrontLeft <= OBSTACLE_THRESHOLD && distanceFrontRight <= OBSTACLE_THRESHOLD) {
     // Obstacle directly in front: check back sensor
-    if (distanceBack > OBSTACLE_THRESHOLD) {
+    if (distanceBack > OBSTACLE_THRESHOLD || distanceBack == -1) {
       // Back is clear: move backward, then random turn
       Serial.println("Obstacle in front, moving backward");
       moveBackward();
-      delay(1000); // Move backward for 1 second
+      delay(200); // Move backward for 1 second
       stopMotors();
 
       // Randomly choose left or right turn
@@ -102,7 +102,7 @@ void loop() {
         Serial.println("Trying Right Turn");
         turnRight();
       }
-      delay(1000); // Turn for 1 second
+      delay(200); // Turn for 1 second
       stopMotors();
     } else {
       // Back obstacle detected: stop to avoid collision
@@ -112,7 +112,7 @@ void loop() {
   }
 
   // Delay before next sensor reading
-  delay(500);
+  delay(100);
 }
 
 // Function to measure distance using ultrasonic sensor
